@@ -16,6 +16,115 @@ The device use frequency detection circuits connected to GPIO12 and GPIO13 of th
 
 Below two scripts which do something like switchmode4 and switchmode1. The script for switchmode4 is created by @thxthx0, switchmode1 @caccia78 and @cHunter789
 
+Standard Wall Switch Mode
+```lua
+
+>D
+sw1=0
+sw2=0
+cnt1=0
+cnt2=0
+timer1=0
+timer2=0
+pwr1=0
+pwr2=0
+pwr1save=0
+pwr2save=0
+
+>B
+=>print "WiFi 2-Gang Switch Script"
+
+
+
+>F
+; Counter1/2 and Relay1/2 configured in template
+cnt1=pc[1]
+cnt2=pc[2]
+
+if chg[cnt1]>0
+then
+; counter1 has changed, switch is on, reset counter
+sw1=1
+else
+; no change switch is off
+sw1=0
+endif
+
+if chg[cnt2]>0
+then
+; counter2 has changed, switch is on, 
+sw2=1
+else
+; no change switch is off
+sw2=0
+endif
+
+; 100 ms timer
+timer1+=1
+timer2+=1
+
+if sw1==1
+and timer1>2
+and pwr1==0
+
+then
+=>Power1 1
+pwr1=1
+endif
+
+if sw1==0
+and timer1<=2
+and pwr1==1
+
+then
+=>Power1 0
+pwr1=0
+endif
+
+if sw1==0
+then
+timer1=0
+endif
+
+if sw2==1
+and timer2>2
+and pwr2==0
+then
+=>Power2 1
+pwr2=1
+endif
+
+if sw2==0
+and timer2<=2
+and pwr2==1
+then
+=>Power2 0
+pwr2=0
+endif
+
+if sw2==0
+then
+timer2=0
+endif
+
+>S
+
+;to avoid possible issues when increasing counters and variables
+
+if timer1>10
+then
+->Counter1 0
+timer1=3
+endif
+
+if timer2>10
+then
+->Counter2 0
+timer2=3
+endif
+
+```
+
 SwitchMode1
 
 ```lua
